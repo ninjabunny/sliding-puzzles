@@ -2,7 +2,7 @@
 
 const BUILTIN_LEVELS = [
   {
-    name: "Simplicty 2",
+    name: "Simplicity 2",
     width: 4,
     height: 5,
     pieces: [
