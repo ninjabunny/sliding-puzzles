@@ -19,6 +19,19 @@
 
     <hr class="toolbar-divider">
 
+    <!-- Load built-in level -->
+    <div class="toolbar-section">
+      <label for="load-builtin">Load from Game</label>
+      <div style="display:flex;gap:6px;">
+        <select id="load-builtin" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 8px;font-size:13px;">
+          <option value="">— pick a level —</option>
+        </select>
+        <button id="btn-load-builtin" class="btn-secondary" style="padding:7px 10px;font-size:12px;">Load</button>
+      </div>
+    </div>
+
+    <hr class="toolbar-divider">
+
     <!-- Level Name -->
     <div class="toolbar-section">
       <label for="editor-name">Level Name</label>
@@ -90,6 +103,7 @@
 
 </div>
 
-<script type="module" src="src/editor.js"></script>
+<script defer src="src/levels.js"></script>
+<script defer src="src/editor.js"></script>
 </body>
 </html>

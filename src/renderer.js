@@ -4,7 +4,7 @@ const MAX_CELL = 80;
 const CORNER_R = 6;
 const GAP = 2;
 
-export class Renderer {
+class Renderer {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');

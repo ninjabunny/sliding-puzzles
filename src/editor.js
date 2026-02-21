@@ -18,6 +18,8 @@ const btnImport = document.getElementById('btn-import-file');
 const importFile = document.getElementById('import-file-input');
 const testLink = document.getElementById('test-link');
 const btnClearAll = document.getElementById('btn-clear-all');
+const selectBuiltin = document.getElementById('load-builtin');
+const btnLoadBuiltin = document.getElementById('btn-load-builtin');
 
 const COLORS = ['#4ecdc4','#45b7d1','#96ceb4','#a29bfe','#fd79a8','#55efc4','#ffeaa7','#dfe6e9','#e17055','#74b9ff','#00cec9','#6c5ce7','#b2bec3'];
 let colorIdx = 0;
@@ -596,6 +598,21 @@ document.getElementById('btn-test').addEventListener('click', () => {
 
   const hash = btoa(JSON.stringify(json));
   window.open(`index.html#${hash}`, '_blank');
+});
+
+// Populate built-in level dropdown
+BUILTIN_LEVELS.forEach((lvl, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = lvl.name || `Level ${i + 1}`;
+  selectBuiltin.appendChild(opt);
+});
+
+btnLoadBuiltin.addEventListener('click', () => {
+  const idx = parseInt(selectBuiltin.value);
+  if (isNaN(idx)) return;
+  loadFromJson(BUILTIN_LEVELS[idx]);
+  selectBuiltin.value = '';
 });
 
 // Init

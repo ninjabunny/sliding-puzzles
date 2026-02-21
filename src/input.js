@@ -1,7 +1,7 @@
 // Pointer Events drag handler for the puzzle canvas
 // State machine: IDLE → PRESSING → DRAGGING → IDLE
 
-export class InputHandler {
+class InputHandler {
   constructor(canvas, gameState, renderer, onMove, onWin) {
     this.canvas = canvas;
     this.gameState = gameState;

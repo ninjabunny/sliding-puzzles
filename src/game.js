@@ -1,6 +1,6 @@
 // GameState — all puzzle logic, no rendering
 
-export class GameState {
+class GameState {
   constructor() {
     this.pieces = new Map();
     this.grid = [];

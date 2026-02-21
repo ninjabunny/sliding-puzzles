@@ -1,6 +1,6 @@
 // Built-in puzzle levels
 
-export const BUILTIN_LEVELS = [
+const BUILTIN_LEVELS = [
   {
     name: "Getting Out",
     width: 6,

@@ -1,10 +1,5 @@
 // Game page orchestration
 
-import { GameState } from './game.js';
-import { Renderer } from './renderer.js';
-import { InputHandler } from './input.js';
-import { BUILTIN_LEVELS } from './levels.js';
-
 const levelSelect = document.getElementById('level-select-wrap');
 const gameContainer = document.getElementById('game-container');
 const winOverlay = document.getElementById('win-overlay');
