@@ -55,13 +55,13 @@ class Renderer {
       }
     }
 
-    // Goal area
-    if (state.goal) {
-      const targetPiece = state.pieces.get(state.goal.pieceId);
+    // Goal areas (one per target)
+    for (const goal of state.goals || []) {
+      const targetPiece = state.pieces.get(goal.pieceId);
       const goalColor = targetPiece ? targetPiece.color : '#ff6b6b';
       ctx.save();
       ctx.globalAlpha = 0.25;
-      for (const [col, row] of state.goal.cells) {
+      for (const [col, row] of goal.cells) {
         const [x, y] = this.cellToPixel(col, row);
         ctx.fillStyle = goalColor;
         this._roundRect(ctx, x + GAP, y + GAP, C - GAP * 2, C - GAP * 2, 4);
@@ -71,7 +71,7 @@ class Renderer {
       ctx.strokeStyle = goalColor;
       ctx.lineWidth = 2;
       ctx.setLineDash([4, 4]);
-      for (const [col, row] of state.goal.cells) {
+      for (const [col, row] of goal.cells) {
         const [x, y] = this.cellToPixel(col, row);
         ctx.strokeRect(x + GAP + 1, y + GAP + 1, C - GAP * 2 - 2, C - GAP * 2 - 2);
       }

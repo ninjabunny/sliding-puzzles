@@ -33,9 +33,8 @@ let colorIdx = 0;
 // Editor state
 let editorWidth = 6;
 let editorHeight = 6;
-let pieces = new Map(); // id → {id, cells, color, isTarget}
-let goalCells = []; // [[col,row], ...]
-let goalPieceId = null; // which piece is the target
+let pieces = new Map(); // id → {id, cells, color, isTarget, isStatic}
+let goals = {};        // { pieceId: [[col,row],...] } — one entry per target piece
 let selectedTool = 'paint'; // 'paint'|'select'|'erase'|'goal'
 let selectedPieceId = null;
 let pieceCounter = 0;
@@ -80,20 +79,21 @@ function render() {
     }
   }
 
-  // Goal cells
-  const goalSet = new Set(goalCells.map(([c, r]) => `${c},${r}`));
-  for (const [col, row] of goalCells) {
-    const gColor = goalPieceId && pieces.has(goalPieceId) ? pieces.get(goalPieceId).color : '#ff6b6b';
-    ctx.fillStyle = gColor;
-    ctx.globalAlpha = 0.3;
-    roundRect(ctx, col * CELL + 2, row * CELL + 2, CELL - 4, CELL - 4, 4);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = gColor;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 4]);
-    ctx.strokeRect(col * CELL + 3, row * CELL + 3, CELL - 6, CELL - 6);
-    ctx.setLineDash([]);
+  // Goal cells (one set per target piece)
+  for (const [pid, cells] of Object.entries(goals)) {
+    const gColor = pieces.has(pid) ? pieces.get(pid).color : '#ff6b6b';
+    for (const [col, row] of cells) {
+      ctx.fillStyle = gColor;
+      ctx.globalAlpha = 0.3;
+      roundRect(ctx, col * CELL + 2, row * CELL + 2, CELL - 4, CELL - 4, 4);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = gColor;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(col * CELL + 3, row * CELL + 3, CELL - 6, CELL - 6);
+      ctx.setLineDash([]);
+    }
   }
 
   // Pieces
@@ -276,18 +276,23 @@ canvas.addEventListener('pointerdown', (ev) => {
       if (piece.cells.length === 0) {
         pieces.delete(hitId);
         if (selectedPieceId === hitId) selectedPieceId = null;
-        if (goalPieceId === hitId) goalPieceId = null;
+        delete goals[hitId];
       }
       updatePieceList();
       render();
     }
   } else if (selectedTool === 'goal') {
-    const key = `${col},${row}`;
-    const idx = goalCells.findIndex(([c, r]) => c === col && r === row);
+    const pid = selectedPieceId;
+    if (!pid || !pieces.has(pid) || !pieces.get(pid).isTarget) {
+      alert('Select a target piece first, then use the Goal tool to set its destination.');
+      return;
+    }
+    if (!goals[pid]) goals[pid] = [];
+    const idx = goals[pid].findIndex(([c, r]) => c === col && r === row);
     if (idx >= 0) {
-      goalCells.splice(idx, 1);
+      goals[pid].splice(idx, 1);
     } else {
-      goalCells.push([col, row]);
+      goals[pid].push([col, row]);
     }
     render();
   }
@@ -345,7 +350,7 @@ canvas.addEventListener('pointermove', (ev) => {
       if (piece.cells.length === 0) {
         pieces.delete(hitId);
         if (selectedPieceId === hitId) selectedPieceId = null;
-        if (goalPieceId === hitId) goalPieceId = null;
+        delete goals[hitId];
         updatePieceList();
       }
       render();
@@ -389,8 +394,11 @@ btnApplySize.addEventListener('click', () => {
     piece.cells = piece.cells.filter(([col, row]) => col < w && row < h);
     if (piece.cells.length === 0) pieces.delete(id);
   }
-  // Clamp goal cells
-  goalCells = goalCells.filter(([col, row]) => col < w && row < h);
+  // Clamp goal cells to new board bounds
+  for (const pid of Object.keys(goals)) {
+    goals[pid] = goals[pid].filter(([col, row]) => col < w && row < h);
+    if (goals[pid].length === 0) delete goals[pid];
+  }
 
   // Reset canvas transform before resize
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -402,8 +410,7 @@ btnApplySize.addEventListener('click', () => {
 // Clear all
 btnClearAll.addEventListener('click', () => {
   pieces.clear();
-  goalCells = [];
-  goalPieceId = null;
+  goals = {};
   selectedPieceId = null;
   pieceCounter = 0;
   colorIdx = 0;
@@ -421,19 +428,22 @@ function updatePieceList() {
     swatch.className = 'piece-swatch';
     swatch.style.background = piece.color;
 
+    const goalCount = goals[id] ? goals[id].length : 0;
     const label = document.createElement('span');
     label.className = 'piece-label';
-    label.textContent = id + (piece.isTarget ? ' ★' : piece.isStatic ? ' ⬛' : '');
+    label.textContent = id + (piece.isTarget ? ` ★(${goalCount})` : piece.isStatic ? ' ⬛' : '');
 
     const btnTarget = document.createElement('button');
     btnTarget.className = 'btn-target' + (piece.isTarget ? ' active' : '');
-    btnTarget.textContent = piece.isTarget ? 'Target ✓' : 'Set Target';
-    btnTarget.title = 'Set as target piece';
+    btnTarget.textContent = piece.isTarget ? 'Target ✓' : 'Target';
+    btnTarget.title = 'Toggle as target piece';
     btnTarget.addEventListener('click', () => {
-      for (const p of pieces.values()) p.isTarget = false;
-      piece.isTarget = true;
-      piece.isStatic = false;
-      goalPieceId = id;
+      piece.isTarget = !piece.isTarget;
+      if (piece.isTarget) {
+        piece.isStatic = false;
+      } else {
+        delete goals[id];
+      }
       selectedPieceId = id;
       updatePieceList();
       render();
@@ -453,6 +463,11 @@ function updatePieceList() {
     item.addEventListener('click', (e) => {
       if (e.target === btnTarget || e.target === btnStatic) return;
       selectedPieceId = id;
+      if (selectedTool === 'goal' && !piece.isTarget) {
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('.tool-btn[data-tool="select"]').classList.add('active');
+        selectedTool = 'select';
+      }
       updatePieceList();
       render();
     });
@@ -475,16 +490,17 @@ function validate() {
   }
 
   const targetPieces = [...pieces.values()].filter(p => p.isTarget);
-  if (targetPieces.length !== 1) {
-    errors.push('Exactly one piece must be marked as the target.');
+  if (targetPieces.length === 0) {
+    errors.push('At least one piece must be marked as a target.');
   }
 
-  if (goalCells.length === 0) {
-    errors.push('Goal area is empty. Use the Goal tool to mark goal cells.');
-  }
-
-  if (targetPieces.length === 1 && goalCells.length !== targetPieces[0].cells.length) {
-    errors.push(`Goal cell count (${goalCells.length}) must match target piece cell count (${targetPieces[0].cells.length}).`);
+  for (const tp of targetPieces) {
+    const gc = goals[tp.id] || [];
+    if (gc.length === 0) {
+      errors.push(`Target piece "${tp.id}" has no goal cells. Use the Goal tool to set its destination.`);
+    } else if (gc.length !== tp.cells.length) {
+      errors.push(`Target "${tp.id}": goal has ${gc.length} cell(s) but piece has ${tp.cells.length}.`);
+    }
   }
 
   // Check connectivity of each piece (BFS)
@@ -536,8 +552,6 @@ btnExport.addEventListener('click', () => {
     return;
   }
 
-  const targetPiece = [...pieces.values()].find(p => p.isTarget);
-
   const json = {
     name: inputName.value || 'Custom Level',
     width: editorWidth,
@@ -547,12 +561,9 @@ btnExport.addEventListener('click', () => {
       cells: p.cells,
       color: p.color,
       isTarget: p.isTarget || undefined,
-        isStatic: p.isStatic || undefined,
+      isStatic: p.isStatic || undefined,
     })),
-    goal: {
-      pieceId: targetPiece.id,
-      cells: goalCells,
-    }
+    goals: Object.entries(goals).map(([pieceId, cells]) => ({ pieceId, cells })),
   };
 
   const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
@@ -589,6 +600,14 @@ function loadFromJson(json) {
   inputHeight.value = editorHeight;
   inputName.value = json.name || '';
 
+  // Normalize goals: support both `goals` array and legacy `goal` single
+  const rawGoals = json.goals || (json.goal ? [json.goal] : []);
+  goals = {};
+  for (const g of rawGoals) {
+    goals[g.pieceId] = g.cells.map(c => [...c]);
+  }
+
+  const targetIds = new Set(Object.keys(goals));
   pieces.clear();
   pieceCounter = 0;
   for (const p of json.pieces || []) {
@@ -596,14 +615,11 @@ function loadFromJson(json) {
       id: p.id,
       cells: p.cells.map(c => [...c]),
       color: p.color,
-      isTarget: !!p.isTarget,
+      isTarget: targetIds.has(p.id),
       isStatic: !!p.isStatic,
     });
-    if (p.isTarget) goalPieceId = p.id;
   }
 
-  goalCells = (json.goal?.cells || []).map(c => [...c]);
-  goalPieceId = json.goal?.pieceId || null;
   selectedPieceId = null;
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -620,7 +636,6 @@ document.getElementById('btn-test').addEventListener('click', () => {
     return;
   }
 
-  const targetPiece = [...pieces.values()].find(p => p.isTarget);
   const json = {
     name: inputName.value || 'Test Level',
     width: editorWidth,
@@ -630,9 +645,9 @@ document.getElementById('btn-test').addEventListener('click', () => {
       cells: p.cells,
       color: p.color,
       isTarget: p.isTarget || undefined,
-        isStatic: p.isStatic || undefined,
+      isStatic: p.isStatic || undefined,
     })),
-    goal: { pieceId: targetPiece.id, cells: goalCells }
+    goals: Object.entries(goals).map(([pieceId, cells]) => ({ pieceId, cells })),
   };
 
   const hash = btoa(JSON.stringify(json));

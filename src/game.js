@@ -4,11 +4,12 @@ class GameState {
   constructor() {
     this.pieces = new Map();
     this.grid = [];
-    this.goal = null;
+    this.goals = [];
     this.moveCount = 0;
     this.width = 0;
     this.height = 0;
     this.initialPieces = null;
+    this.initialGoals = [];
     this.levelName = '';
   }
 
@@ -16,16 +17,24 @@ class GameState {
     this.levelName = json.name || '';
     this.width = json.width;
     this.height = json.height;
-    this.goal = JSON.parse(JSON.stringify(json.goal));
+    // Support both old single `goal` and new `goals` array
+    if (json.goals) {
+      this.goals = JSON.parse(JSON.stringify(json.goals));
+    } else if (json.goal) {
+      this.goals = [JSON.parse(JSON.stringify(json.goal))];
+    } else {
+      this.goals = [];
+    }
     this.moveCount = 0;
 
+    const targetIds = new Set(this.goals.map(g => g.pieceId));
     this.pieces = new Map();
     for (const p of json.pieces) {
       this.pieces.set(p.id, {
         id: p.id,
         cells: p.cells.map(c => [...c]),
         color: p.color,
-        isTarget: !!p.isTarget,
+        isTarget: targetIds.has(p.id),
         isStatic: !!p.isStatic,
       });
     }
@@ -33,6 +42,7 @@ class GameState {
     this.rebuildGrid();
 
     // Snapshot for reset
+    this.initialGoals = JSON.parse(JSON.stringify(this.goals));
     this.initialPieces = new Map();
     for (const [id, p] of this.pieces) {
       this.initialPieces.set(id, {
@@ -134,14 +144,18 @@ class GameState {
   }
 
   checkWin() {
-    const goalCells = new Set(this.goal.cells.map(([c, r]) => `${c},${r}`));
-    const piece = this.pieces.get(this.goal.pieceId);
-    if (!piece) return false;
-    if (piece.cells.length !== this.goal.cells.length) return false;
-    return piece.cells.every(([c, r]) => goalCells.has(`${c},${r}`));
+    if (this.goals.length === 0) return false;
+    return this.goals.every(goal => {
+      const piece = this.pieces.get(goal.pieceId);
+      if (!piece) return false;
+      if (piece.cells.length !== goal.cells.length) return false;
+      const goalSet = new Set(goal.cells.map(([c, r]) => `${c},${r}`));
+      return piece.cells.every(([c, r]) => goalSet.has(`${c},${r}`));
+    });
   }
 
   reset() {
+    this.goals = JSON.parse(JSON.stringify(this.initialGoals));
     this.pieces = new Map();
     for (const [id, p] of this.initialPieces) {
       this.pieces.set(id, {
