@@ -26,6 +26,7 @@ class GameState {
         cells: p.cells.map(c => [...c]),
         color: p.color,
         isTarget: !!p.isTarget,
+        isStatic: !!p.isStatic,
       });
     }
 
@@ -39,6 +40,7 @@ class GameState {
         cells: p.cells.map(c => [...c]),
         color: p.color,
         isTarget: p.isTarget,
+        isStatic: p.isStatic,
       });
     }
   }
@@ -147,6 +149,7 @@ class GameState {
         cells: p.cells.map(c => [...c]),
         color: p.color,
         isTarget: p.isTarget,
+        isStatic: p.isStatic,
       });
     }
     this.rebuildGrid();

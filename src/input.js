@@ -40,6 +40,7 @@ class InputHandler {
     const row = Math.floor(py / C);
     const pieceId = this.gameState.pieceAt(col, row);
     if (!pieceId) return;
+    if (this.gameState.pieces.get(pieceId).isStatic) return;
 
     this.canvas.setPointerCapture(ev.pointerId);
     this.pointerId = ev.pointerId;

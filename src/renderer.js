@@ -133,9 +133,30 @@ class Renderer {
 
     if (shadow) ctx.restore();
 
+    // Static piece overlay — diagonal stripes
+    if (piece.isStatic) {
+      ctx.save();
+      const stripeCanvas = document.createElement('canvas');
+      stripeCanvas.width = 8; stripeCanvas.height = 8;
+      const sc = stripeCanvas.getContext('2d');
+      sc.strokeStyle = 'rgba(0,0,0,0.25)';
+      sc.lineWidth = 2;
+      sc.beginPath(); sc.moveTo(0, 8); sc.lineTo(8, 0); sc.stroke();
+      sc.beginPath(); sc.moveTo(-4, 8); sc.lineTo(4, 0); sc.stroke();
+      sc.beginPath(); sc.moveTo(4, 8); sc.lineTo(12, 0); sc.stroke();
+      const pattern = ctx.createPattern(stripeCanvas, 'repeat');
+      ctx.fillStyle = pattern;
+      for (const [col, row] of piece.cells) {
+        this._roundRect(ctx, col * C + ox + 1, row * C + oy + 1, C - 2, C - 2, CORNER_R);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
     // Stroke outer edges only
     ctx.save();
-    ctx.strokeStyle = this._darken(color, 0.25);
+    ctx.strokeStyle = piece.isStatic ? 'rgba(255,255,255,0.35)' : this._darken(color, 0.25);
+    ctx.lineWidth = piece.isStatic ? 2 : 1.5;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     for (const [col, row] of piece.cells) {

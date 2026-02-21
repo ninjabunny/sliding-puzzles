@@ -110,10 +110,28 @@ function render() {
       }
     }
 
+    // Static piece stripe overlay
+    if (piece.isStatic) {
+      const sc = document.createElement('canvas');
+      sc.width = 8; sc.height = 8;
+      const sctx = sc.getContext('2d');
+      sctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      sctx.lineWidth = 2;
+      sctx.beginPath(); sctx.moveTo(0, 8); sctx.lineTo(8, 0); sctx.stroke();
+      sctx.beginPath(); sctx.moveTo(-4, 8); sctx.lineTo(4, 0); sctx.stroke();
+      sctx.beginPath(); sctx.moveTo(4, 8); sctx.lineTo(12, 0); sctx.stroke();
+      const pattern = ctx.createPattern(sc, 'repeat');
+      ctx.fillStyle = pattern;
+      for (const [col, row] of piece.cells) {
+        roundRect(ctx, col * CELL + 1, row * CELL + 1, CELL - 2, CELL - 2, 6);
+        ctx.fill();
+      }
+    }
+
     // Stroke outer edges
     ctx.save();
-    ctx.strokeStyle = darken(piece.color, 0.25);
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = piece.isStatic ? 'rgba(255,255,255,0.35)' : darken(piece.color, 0.25);
+    ctx.lineWidth = piece.isStatic ? 2 : 1.5;
     ctx.beginPath();
     for (const [col, row] of piece.cells) {
       const x = col * CELL, y = row * CELL;
@@ -223,7 +241,7 @@ canvas.addEventListener('pointerdown', (ev) => {
       // Create new piece
       const id = nextId();
       const color = colorPicker.value || nextColor();
-      pieces.set(id, { id, cells: [[col, row]], color, isTarget: false });
+      pieces.set(id, { id, cells: [[col, row]], color, isTarget: false, isStatic: false });
       paintingPieceId = id;
       selectedPieceId = id;
       updatePieceList();
@@ -399,24 +417,35 @@ function updatePieceList() {
 
     const label = document.createElement('span');
     label.className = 'piece-label';
-    label.textContent = id + (piece.isTarget ? ' ★' : '');
+    label.textContent = id + (piece.isTarget ? ' ★' : piece.isStatic ? ' ⬛' : '');
 
     const btnTarget = document.createElement('button');
     btnTarget.className = 'btn-target' + (piece.isTarget ? ' active' : '');
     btnTarget.textContent = piece.isTarget ? 'Target ✓' : 'Set Target';
     btnTarget.title = 'Set as target piece';
     btnTarget.addEventListener('click', () => {
-      // Unset all targets
       for (const p of pieces.values()) p.isTarget = false;
       piece.isTarget = true;
+      piece.isStatic = false;
       goalPieceId = id;
       selectedPieceId = id;
       updatePieceList();
       render();
     });
 
+    const btnStatic = document.createElement('button');
+    btnStatic.className = 'btn-target' + (piece.isStatic ? ' active' : '');
+    btnStatic.textContent = piece.isStatic ? 'Static ✓' : 'Static';
+    btnStatic.title = 'Make piece unmovable';
+    btnStatic.addEventListener('click', () => {
+      piece.isStatic = !piece.isStatic;
+      if (piece.isStatic) piece.isTarget = false;
+      updatePieceList();
+      render();
+    });
+
     item.addEventListener('click', (e) => {
-      if (e.target === btnTarget) return;
+      if (e.target === btnTarget || e.target === btnStatic) return;
       selectedPieceId = id;
       updatePieceList();
       render();
@@ -425,6 +454,7 @@ function updatePieceList() {
     item.appendChild(swatch);
     item.appendChild(label);
     item.appendChild(btnTarget);
+    item.appendChild(btnStatic);
     pieceList.appendChild(item);
   }
 }
@@ -511,6 +541,7 @@ btnExport.addEventListener('click', () => {
       cells: p.cells,
       color: p.color,
       isTarget: p.isTarget || undefined,
+        isStatic: p.isStatic || undefined,
     })),
     goal: {
       pieceId: targetPiece.id,
@@ -560,6 +591,7 @@ function loadFromJson(json) {
       cells: p.cells.map(c => [...c]),
       color: p.color,
       isTarget: !!p.isTarget,
+      isStatic: !!p.isStatic,
     });
     if (p.isTarget) goalPieceId = p.id;
   }
@@ -592,6 +624,7 @@ document.getElementById('btn-test').addEventListener('click', () => {
       cells: p.cells,
       color: p.color,
       isTarget: p.isTarget || undefined,
+        isStatic: p.isStatic || undefined,
     })),
     goal: { pieceId: targetPiece.id, cells: goalCells }
   };
