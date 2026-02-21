@@ -80,4 +80,181 @@ const BUILTIN_LEVELS = [
       },
     ],
   },
+  {
+    name: "Dog and Balls",
+    width: 6,
+    height: 5,
+    pieces: [
+      {
+        id: "p2",
+        cells: [[3, 3]],
+        color: "#ff6b6b",
+        isTarget: true,
+      },
+      {
+        id: "p3",
+        cells: [[5, 3]],
+        color: "#45b7d1",
+        isTarget: true,
+      },
+      {
+        id: "p4",
+        cells: [
+          [5, 4],
+          [4, 4],
+          [4, 3],
+          [4, 2],
+          [3, 2],
+          [2, 2],
+          [2, 3],
+          [2, 4],
+          [1, 4],
+          [2, 1],
+          [1, 1],
+        ],
+        color: "#ffa94d",
+      },
+      {
+        id: "p5",
+        cells: [[3, 4]],
+        color: "#555555",
+        isStatic: true,
+      },
+      {
+        id: "p6",
+        cells: [[0, 2]],
+        color: "#555555",
+        isStatic: true,
+      },
+      {
+        id: "p7",
+        cells: [[5, 1]],
+        color: "#555555",
+        isStatic: true,
+      },
+      {
+        id: "p8",
+        cells: [[1, 3]],
+        color: "#a9e34b",
+      },
+      {
+        id: "p9",
+        cells: [
+          [5, 0],
+          [4, 0],
+        ],
+        color: "#a29bfe",
+      },
+    ],
+    goals: [
+      {
+        pieceId: "p2",
+        cells: [[5, 3]],
+      },
+      {
+        pieceId: "p3",
+        cells: [[3, 3]],
+      },
+    ],
+  },
+  {
+    name: "Labyrinth 88",
+    width: 6,
+    height: 6,
+    pieces: [
+      {
+        id: "p1",
+        cells: [[4, 2]],
+        color: "#ff6b6b",
+        isTarget: true,
+      },
+      {
+        id: "p2",
+        cells: [[3, 3]],
+        color: "#45b7d1",
+        isTarget: true,
+      },
+      {
+        id: "p3",
+        cells: [
+          [1, 5],
+          [1, 4],
+          [1, 3],
+          [2, 4],
+          [0, 4],
+        ],
+        color: "#a29bfe",
+      },
+      {
+        id: "p4",
+        cells: [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+          [1, 1],
+        ],
+        color: "#a9e34b",
+      },
+      {
+        id: "p5",
+        cells: [
+          [1, 0],
+          [2, 0],
+          [3, 0],
+          [2, 1],
+        ],
+        color: "#a9e34b",
+      },
+      {
+        id: "p6",
+        cells: [
+          [3, 1],
+          [4, 1],
+          [5, 1],
+          [4, 0],
+        ],
+        color: "#a9e34b",
+      },
+      {
+        id: "p7",
+        cells: [
+          [5, 2],
+          [5, 3],
+          [5, 4],
+          [4, 3],
+        ],
+        color: "#a9e34b",
+      },
+      {
+        id: "p8",
+        cells: [
+          [3, 2],
+          [2, 2],
+          [1, 2],
+          [2, 3],
+        ],
+        color: "#a9e34b",
+      },
+      {
+        id: "p9",
+        cells: [
+          [3, 5],
+          [4, 5],
+          [5, 5],
+          [4, 4],
+        ],
+        color: "#a9e34b",
+      },
+    ],
+    goals: [
+      {
+        pieceId: "p1",
+        cells: [[3, 3]],
+      },
+      {
+        pieceId: "p2",
+        cells: [[4, 2]],
+      },
+    ],
+  },
 ];
