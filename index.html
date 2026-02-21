@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sliding Puzzles</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="game-header">
+  <h1>Sliding Puzzles</h1>
+  <a href="editor.html">Level Editor →</a>
+</header>
+
+<!-- Level Select -->
+<div id="level-select-wrap">
+  <h2>Choose a Level</h2>
+  <div id="level-select"></div>
+
+  <div id="import-section">
+    <span>or</span>
+    <button id="import-btn" class="btn-secondary">Import JSON Level</button>
+    <input type="file" id="import-input" accept=".json,application/json" style="display:none">
+  </div>
+</div>
+
+<!-- Game Container -->
+<div id="game-container" hidden>
+  <div id="hud">
+    <span id="hud-label">Moves</span>
+    <div id="hud-moves-wrap">
+      <span id="hud-moves">0</span>
+    </div>
+    <div id="hud-actions">
+      <button id="btn-reset" class="btn-secondary">Reset</button>
+      <button id="btn-back" class="btn-ghost">← Back</button>
+    </div>
+  </div>
+  <canvas id="game-canvas"></canvas>
+</div>
+
+<!-- Win Overlay -->
+<div id="win-overlay" hidden>
+  <div id="win-box">
+    <h2>Solved! 🎉</h2>
+    <p>You completed the puzzle in</p>
+    <strong><span id="win-moves">0</span> moves</strong>
+    <div id="win-buttons">
+      <button id="btn-win-next" class="btn-primary">Next Level →</button>
+      <button id="btn-win-reset" class="btn-ghost">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

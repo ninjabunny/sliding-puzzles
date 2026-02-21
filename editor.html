@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Editor — Sliding Puzzles</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="editor-layout">
+
+  <!-- Sidebar Toolbar -->
+  <aside id="toolbar">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h1>Level Editor</h1>
+      <a href="index.html" id="editor-header-link">← Game</a>
+    </div>
+
+    <hr class="toolbar-divider">
+
+    <!-- Level Name -->
+    <div class="toolbar-section">
+      <label for="editor-name">Level Name</label>
+      <input type="text" id="editor-name" placeholder="My Level" value="Custom Level">
+    </div>
+
+    <!-- Board Size -->
+    <div class="toolbar-section">
+      <span class="section-title">Board Size</span>
+      <div class="size-row">
+        <input type="number" id="editor-width" value="6" min="3" max="12">
+        <span>×</span>
+        <input type="number" id="editor-height" value="6" min="3" max="12">
+        <button id="btn-apply-size" class="btn-secondary" style="flex:1;padding:7px 10px;font-size:12px;">Apply</button>
+      </div>
+    </div>
+
+    <hr class="toolbar-divider">
+
+    <!-- Tools -->
+    <div class="toolbar-section">
+      <span class="section-title">Tools</span>
+      <div class="tool-buttons">
+        <button class="tool-btn active" data-tool="paint" title="Draw new piece cells">✏️ Paint</button>
+        <button class="tool-btn" data-tool="select" title="Select and move pieces">↖ Select</button>
+        <button class="tool-btn" data-tool="erase" title="Erase cells">✕ Erase</button>
+        <button class="tool-btn" data-tool="goal" title="Toggle goal cells">⊙ Goal</button>
+      </div>
+    </div>
+
+    <!-- Color Picker -->
+    <div class="toolbar-section">
+      <label for="color-picker">Piece Color</label>
+      <input type="color" id="color-picker" value="#4ecdc4">
+    </div>
+
+    <hr class="toolbar-divider">
+
+    <!-- Piece List -->
+    <div class="toolbar-section">
+      <span class="section-title">Pieces</span>
+      <div id="piece-list"></div>
+    </div>
+
+    <hr class="toolbar-divider">
+
+    <!-- Actions -->
+    <div class="toolbar-section">
+      <button id="btn-test" class="btn-primary btn-full">▶ Test in Game</button>
+      <button id="btn-export" class="btn-secondary btn-full">↓ Export JSON</button>
+      <button id="btn-import-file" class="btn-ghost btn-full">↑ Import JSON</button>
+      <input type="file" id="import-file-input" accept=".json,application/json" style="display:none">
+      <button id="btn-clear-all" class="btn-ghost btn-full" style="color:#e94560;">Clear All</button>
+    </div>
+
+    <div style="margin-top:auto;padding-top:16px;font-size:11px;color:var(--text-dim);line-height:1.6;">
+      <strong>Paint:</strong> Click empty cell to start piece, drag to extend.<br>
+      <strong>Select:</strong> Click piece to select, drag to move.<br>
+      <strong>Erase:</strong> Click/drag to remove cells.<br>
+      <strong>Goal:</strong> Click cells to mark as goal.<br>
+      Set one piece as Target, then set the goal area.
+    </div>
+  </aside>
+
+  <!-- Editor Canvas -->
+  <main id="editor-main">
+    <canvas id="editor-canvas"></canvas>
+  </main>
+
+</div>
+
+<script type="module" src="src/editor.js"></script>
+</body>
+</html>
