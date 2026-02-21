@@ -73,8 +73,10 @@ class InputHandler {
       const maxForward = this.gameState.maxMove(this.pressedPieceId, dir);
       const revDir = { left: 'right', right: 'left', up: 'down', down: 'up' }[dir];
       const maxBack = this.gameState.maxMove(this.pressedPieceId, revDir);
+      const group = this.gameState.collectGroup(this.pressedPieceId, dir)
+                    || new Set([this.pressedPieceId]);
 
-      this.dragState = { pieceId: this.pressedPieceId, dir, pixelOffset: 0, maxForward, maxBack };
+      this.dragState = { pieceId: this.pressedPieceId, group, dir, pixelOffset: 0, maxForward, maxBack };
       this.state = 'DRAGGING';
     }
 

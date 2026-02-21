@@ -80,51 +80,83 @@ class GameState {
     return this.maxMove(pieceId, dir) > 0;
   }
 
-  maxMove(pieceId, dir) {
-    const piece = this.pieces.get(pieceId);
-    if (!piece) return 0;
-
+  // BFS: collect all pieces that will slide together when pieceId moves in dir.
+  // Returns a Set of pieceIds, or null if a static piece is blocking.
+  collectGroup(pieceId, dir) {
     const [dc, dr] = this._dirDelta(dir);
+    const group = new Set([pieceId]);
+    const queue = [pieceId];
+    while (queue.length > 0) {
+      const pid = queue.shift();
+      for (const [col, row] of this.pieces.get(pid).cells) {
+        const nc = col + dc, nr = row + dr;
+        if (nc < 0 || nc >= this.width || nr < 0 || nr >= this.height) continue;
+        const occ = this.grid[nr][nc];
+        if (occ === null || group.has(occ)) continue;
+        if (this.pieces.get(occ).isStatic) return null; // chain hits a static piece
+        group.add(occ);
+        queue.push(occ);
+      }
+    }
+    return group;
+  }
+
+  maxMove(pieceId, dir) {
+    const [dc, dr] = this._dirDelta(dir);
+    const group = this.collectGroup(pieceId, dir);
+    if (!group) return 0;
+
+    // All cells occupied by the group
+    const groupCells = new Set();
+    for (const pid of group) {
+      for (const [col, row] of this.pieces.get(pid).cells) {
+        groupCells.add(`${col},${row}`);
+      }
+    }
+
     let minGap = Infinity;
 
-    // For each unique row (vertical move) or col (horizontal move), find leading-edge cells
-    if (dc !== 0) {
-      // Horizontal: for each unique row, find the leading col
-      const rowMap = new Map();
-      for (const [col, row] of piece.cells) {
-        if (!rowMap.has(row) || (dc < 0 ? col < rowMap.get(row) : col > rowMap.get(row))) {
-          rowMap.set(row, col);
+    for (const pid of group) {
+      const piece = this.pieces.get(pid);
+      if (dc !== 0) {
+        // Horizontal: per row, find the leading col within this piece
+        const rowMap = new Map();
+        for (const [col, row] of piece.cells) {
+          if (!rowMap.has(row) || (dc < 0 ? col < rowMap.get(row) : col > rowMap.get(row))) {
+            rowMap.set(row, col);
+          }
         }
-      }
-      for (const [row, leadCol] of rowMap) {
-        let gap = 0;
-        let c = leadCol + dc;
-        while (c >= 0 && c < this.width) {
-          const occupant = this.grid[row][c];
-          if (occupant !== null && occupant !== pieceId) break;
-          if (occupant === null) gap++;
-          c += dc;
+        for (const [row, leadCol] of rowMap) {
+          // Skip if another group member is immediately ahead (not the true leading edge)
+          if (groupCells.has(`${leadCol + dc},${row}`)) continue;
+          let gap = 0, c = leadCol + dc;
+          while (c >= 0 && c < this.width) {
+            const occ = this.grid[row][c];
+            if (occ !== null && !group.has(occ)) break;
+            if (occ === null) gap++;
+            c += dc;
+          }
+          minGap = Math.min(minGap, gap);
         }
-        minGap = Math.min(minGap, gap);
-      }
-    } else {
-      // Vertical: for each unique col, find the leading row
-      const colMap = new Map();
-      for (const [col, row] of piece.cells) {
-        if (!colMap.has(col) || (dr < 0 ? row < colMap.get(col) : row > colMap.get(col))) {
-          colMap.set(col, row);
+      } else {
+        // Vertical: per col, find the leading row within this piece
+        const colMap = new Map();
+        for (const [col, row] of piece.cells) {
+          if (!colMap.has(col) || (dr < 0 ? row < colMap.get(col) : row > colMap.get(col))) {
+            colMap.set(col, row);
+          }
         }
-      }
-      for (const [col, leadRow] of colMap) {
-        let gap = 0;
-        let r = leadRow + dr;
-        while (r >= 0 && r < this.height) {
-          const occupant = this.grid[r][col];
-          if (occupant !== null && occupant !== pieceId) break;
-          if (occupant === null) gap++;
-          r += dr;
+        for (const [col, leadRow] of colMap) {
+          if (groupCells.has(`${col},${leadRow + dr}`)) continue;
+          let gap = 0, r = leadRow + dr;
+          while (r >= 0 && r < this.height) {
+            const occ = this.grid[r][col];
+            if (occ !== null && !group.has(occ)) break;
+            if (occ === null) gap++;
+            r += dr;
+          }
+          minGap = Math.min(minGap, gap);
         }
-        minGap = Math.min(minGap, gap);
       }
     }
 
@@ -133,11 +165,13 @@ class GameState {
 
   movePiece(pieceId, dir, steps) {
     if (steps === 0) return false;
-    const piece = this.pieces.get(pieceId);
-    if (!piece) return false;
-
     const [dc, dr] = this._dirDelta(dir);
-    piece.cells = piece.cells.map(([col, row]) => [col + dc * steps, row + dr * steps]);
+    const group = this.collectGroup(pieceId, dir);
+    if (!group) return false;
+    for (const pid of group) {
+      const piece = this.pieces.get(pid);
+      piece.cells = piece.cells.map(([col, row]) => [col + dc * steps, row + dr * steps]);
+    }
     this.rebuildGrid();
     this.moveCount++;
     return true;

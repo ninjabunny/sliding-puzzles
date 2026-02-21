@@ -79,21 +79,21 @@ class Renderer {
       ctx.restore();
     }
 
-    // Draw all pieces except the dragged one
-    const dragId = dragState ? dragState.pieceId : null;
+    // Draw all pieces not in the drag group
+    const dragGroup = dragState ? dragState.group : null;
     for (const [id, piece] of state.pieces) {
-      if (id === dragId) continue;
+      if (dragGroup && dragGroup.has(id)) continue;
       this._drawPiece(ctx, piece, 0, 0, false);
     }
 
-    // Draw dragged piece on top with offset and shadow
+    // Draw drag group at pixel offset; shadow only on the grabbed piece
     if (dragState) {
-      const piece = state.pieces.get(dragState.pieceId);
-      if (piece) {
-        const [ox, oy] = dragState.dir === 'left' || dragState.dir === 'right'
-          ? [dragState.pixelOffset, 0]
-          : [0, dragState.pixelOffset];
-        this._drawPiece(ctx, piece, ox, oy, true);
+      const [ox, oy] = dragState.dir === 'left' || dragState.dir === 'right'
+        ? [dragState.pixelOffset, 0]
+        : [0, dragState.pixelOffset];
+      for (const pid of dragGroup) {
+        const piece = state.pieces.get(pid);
+        if (piece) this._drawPiece(ctx, piece, ox, oy, pid === dragState.pieceId);
       }
     }
   }
