@@ -2,6 +2,12 @@
 
 const CELL = 80;
 
+const PALETTE = [
+  '#ffffff', '#aaaaaa', '#555555', '#000000',
+  '#ff6b6b', '#ffa94d', '#ffd43b', '#a9e34b',
+  '#4ecdc4', '#45b7d1', '#a29bfe', '#fd79a8',
+];
+
 const canvas = document.getElementById('editor-canvas');
 const ctx = canvas.getContext('2d');
 const dpr = window.devicePixelRatio || 1;
@@ -646,6 +652,27 @@ btnLoadBuiltin.addEventListener('click', () => {
   if (isNaN(idx)) return;
   loadFromJson(BUILTIN_LEVELS[idx]);
   selectBuiltin.value = '';
+});
+
+// Color swatches
+const swatchContainer = document.getElementById('color-swatches');
+PALETTE.forEach(hex => {
+  const s = document.createElement('button');
+  s.className = 'color-swatch' + (hex === colorPicker.value ? ' active' : '');
+  s.style.background = hex;
+  s.style.outline = hex === '#ffffff' ? '1px solid #444' : '';
+  s.title = hex;
+  s.addEventListener('click', () => {
+    colorPicker.value = hex;
+    document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
+    s.classList.add('active');
+  });
+  swatchContainer.appendChild(s);
+});
+
+// Keep swatches in sync when user picks a custom color
+colorPicker.addEventListener('input', () => {
+  document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
 });
 
 // Init
