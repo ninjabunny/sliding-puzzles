@@ -15,11 +15,55 @@ const btnWinReset = document.getElementById('btn-win-reset');
 const importInput = document.getElementById('import-input');
 const importBtn = document.getElementById('import-btn');
 
+const confettiCanvas = document.getElementById('confetti-canvas');
+
 const gameState = new GameState();
 const renderer = new Renderer(canvas);
 let inputHandler = null;
 let currentLevelIndex = -1;
+let currentLevelMinMoves = null;
 let allLevels = [...BUILTIN_LEVELS];
+
+function launchConfetti() {
+  const ctx = confettiCanvas.getContext('2d');
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  const colors = ['#ff6b6b','#ffd43b','#a9e34b','#45b7d1','#a29bfe','#ffa94d','#fd79a8'];
+  const particles = Array.from({ length: 140 }, () => ({
+    x: Math.random() * confettiCanvas.width,
+    y: -10 - Math.random() * 120,
+    vx: (Math.random() - 0.5) * 5,
+    vy: 2 + Math.random() * 4,
+    w: 7 + Math.random() * 7,
+    h: 4 + Math.random() * 5,
+    rot: Math.random() * Math.PI * 2,
+    vrot: (Math.random() - 0.5) * 0.25,
+    color: colors[Math.floor(Math.random() * colors.length)],
+  }));
+  const duration = 3200;
+  let start = null;
+  function frame(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    const fade = elapsed > duration * 0.65
+      ? Math.max(0, 1 - (elapsed - duration * 0.65) / (duration * 0.35))
+      : 1;
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.rot += p.vrot;
+      ctx.save();
+      ctx.globalAlpha = fade;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (elapsed < duration) requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+  requestAnimationFrame(frame);
+}
 
 function updateHUD() {
   hudMoves.textContent = gameState.moveCount;
@@ -37,15 +81,17 @@ function showLevelSelect() {
   winOverlay.hidden = true;
 }
 
-function showWin() {
+function showWin(atPar) {
   winMoves.textContent = gameState.moveCount;
   winOverlay.hidden = false;
+  if (atPar) launchConfetti();
 }
 
 function loadAndPlay(levelJson, levelIndex) {
   currentLevelIndex = levelIndex;
+  currentLevelMinMoves = levelJson.minMoves ?? null;
   hudTitle.textContent = levelJson.name || `Level ${levelIndex + 1}`;
-  hudPar.textContent = `/ ${levelJson.minMoves ?? '?'}`;
+  hudPar.textContent = `/ ${currentLevelMinMoves ?? '?'}`;
   gameState.loadLevel(levelJson);
   renderer.resize(levelJson.width, levelJson.height);
   renderer.render(gameState, null);
@@ -56,7 +102,7 @@ function loadAndPlay(levelJson, levelIndex) {
     inputHandler = new InputHandler(canvas, gameState, renderer, () => {
       updateHUD();
     }, () => {
-      showWin();
+      showWin(currentLevelMinMoves != null && gameState.moveCount <= currentLevelMinMoves);
     });
   } else {
     inputHandler.setGameState(gameState);
