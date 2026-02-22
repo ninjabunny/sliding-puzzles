@@ -173,9 +173,14 @@ canvas.dragging { cursor: grabbing; }
   justify-content: space-between;
 }
 
-#hud-label {
+#hud-title {
   font-size: 14px;
-  color: var(--text-dim);
+  font-weight: 600;
+  color: var(--text);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #hud-moves-wrap {

@@ -4,6 +4,7 @@ const levelSelect = document.getElementById('level-select-wrap');
 const gameContainer = document.getElementById('game-container');
 const winOverlay = document.getElementById('win-overlay');
 const canvas = document.getElementById('game-canvas');
+const hudTitle = document.getElementById('hud-title');
 const hudMoves = document.getElementById('hud-moves');
 const winMoves = document.getElementById('win-moves');
 const btnReset = document.getElementById('btn-reset');
@@ -42,6 +43,7 @@ function showWin() {
 
 function loadAndPlay(levelJson, levelIndex) {
   currentLevelIndex = levelIndex;
+  hudTitle.textContent = levelJson.name || `Level ${levelIndex + 1}`;
   gameState.loadLevel(levelJson);
   renderer.resize(levelJson.width, levelJson.height);
   renderer.render(gameState, null);
