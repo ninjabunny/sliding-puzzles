@@ -247,6 +247,142 @@ const BUILTIN_LEVELS = [
     }
   ]
 },
+{
+  "name": "Maggie's Farm 17",
+  "width": 5,
+  "height": 4,
+  "pieces": [
+    {
+      "id": "p1",
+      "cells": [
+        [
+          0,
+          0
+        ]
+      ],
+      "color": "#ff6b6b",
+      "isTarget": true
+    },
+    {
+      "id": "p7",
+      "cells": [
+        [
+          0,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p8",
+      "cells": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p9",
+      "cells": [
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p10",
+      "cells": [
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p11",
+      "cells": [
+        [
+          3,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p12",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p13",
+      "cells": [
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    }
+  ],
+  "goals": [
+    {
+      "pieceId": "p1",
+      "cells": [
+        [
+          4,
+          3
+        ]
+      ]
+    }
+  ]
+},
+
   {
     name: "Simplicity 2",
     width: 4,
