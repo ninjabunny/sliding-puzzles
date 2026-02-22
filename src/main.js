@@ -14,6 +14,11 @@ const btnWinNext = document.getElementById('btn-win-next');
 const btnWinReset = document.getElementById('btn-win-reset');
 const importInput = document.getElementById('import-input');
 const importBtn = document.getElementById('import-btn');
+const achievementsFooter = document.getElementById('achievements-footer');
+const achievementsDialog = document.getElementById('achievements-dialog');
+const btnResetAchievements = document.getElementById('btn-reset-achievements');
+const btnAchievementsConfirm = document.getElementById('btn-achievements-confirm');
+const btnAchievementsCancel = document.getElementById('btn-achievements-cancel');
 
 const confettiCanvas = document.getElementById('confetti-canvas');
 
@@ -97,12 +102,14 @@ function updateHUD() {
 
 function showGame() {
   levelSelect.hidden = true;
+  achievementsFooter.hidden = true;
   gameContainer.hidden = false;
   winOverlay.hidden = true;
 }
 
 function showLevelSelect() {
   levelSelect.hidden = false;
+  achievementsFooter.hidden = false;
   gameContainer.hidden = true;
   winOverlay.hidden = true;
 }
@@ -222,6 +229,15 @@ btnWinReset.addEventListener('click', () => {
   renderer.render(gameState, null);
   updateHUD();
   winOverlay.hidden = true;
+});
+
+// Reset achievements
+btnResetAchievements.addEventListener('click', () => achievementsDialog.showModal());
+btnAchievementsCancel.addEventListener('click', () => achievementsDialog.close());
+btnAchievementsConfirm.addEventListener('click', () => {
+  localStorage.removeItem('slidingPuzzlesProgress');
+  achievementsDialog.close();
+  buildLevelCards();
 });
 
 // Import JSON
