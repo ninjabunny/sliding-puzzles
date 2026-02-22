@@ -6,6 +6,7 @@ const winOverlay = document.getElementById('win-overlay');
 const canvas = document.getElementById('game-canvas');
 const hudTitle = document.getElementById('hud-title');
 const hudMoves = document.getElementById('hud-moves');
+const hudPar = document.getElementById('hud-par');
 const winMoves = document.getElementById('win-moves');
 const btnReset = document.getElementById('btn-reset');
 const btnBack = document.getElementById('btn-back');
@@ -44,6 +45,7 @@ function showWin() {
 function loadAndPlay(levelJson, levelIndex) {
   currentLevelIndex = levelIndex;
   hudTitle.textContent = levelJson.name || `Level ${levelIndex + 1}`;
+  hudPar.textContent = `/ ${levelJson.minMoves ?? '?'}`;
   gameState.loadLevel(levelJson);
   renderer.resize(levelJson.width, levelJson.height);
   renderer.render(gameState, null);
@@ -77,6 +79,10 @@ function buildLevelCards() {
     name.className = 'level-name';
     name.textContent = level.name || `Level ${i + 1}`;
 
+    const par = document.createElement('div');
+    par.className = 'level-par';
+    par.textContent = `Par: ${level.minMoves ?? '?'}`;
+
     const btn = document.createElement('button');
     btn.className = 'btn-play';
     btn.textContent = 'Play';
@@ -84,6 +90,7 @@ function buildLevelCards() {
 
     card.appendChild(thumb);
     card.appendChild(name);
+    card.appendChild(par);
     card.appendChild(btn);
     levelSelect.appendChild(card);
   }

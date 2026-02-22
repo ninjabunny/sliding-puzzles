@@ -132,6 +132,12 @@ canvas.dragging { cursor: grabbing; }
   color: var(--text);
 }
 
+.level-par {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
 .btn-play {
   background: var(--accent);
   color: #fff;
@@ -187,6 +193,11 @@ canvas.dragging { cursor: grabbing; }
   display: flex;
   align-items: baseline;
   gap: 6px;
+}
+
+#hud-par {
+  font-size: 14px;
+  color: var(--text-dim);
 }
 
 #hud-moves {
