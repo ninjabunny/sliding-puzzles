@@ -2332,4 +2332,182 @@ const BUILTIN_LEVELS = [
       },
     ],
   },
+  {
+  "name": "X-Mas",
+      "minMoves": 125,
+  "width": 5,
+  "height": 4,
+  "pieces": [
+    {
+      "id": "p1",
+      "cells": [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "color": "#ff6b6b",
+      "isTarget": true
+    },
+    {
+      "id": "p2",
+      "cells": [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "color": "#a9e34b",
+      "isTarget": true
+    },
+    {
+      "id": "p3",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p4",
+      "cells": [
+        [
+          2,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p5",
+      "cells": [
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p6",
+      "cells": [
+        [
+          4,
+          2
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p7",
+      "cells": [
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          0
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p8",
+      "cells": [
+        [
+          3,
+          0
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p9",
+      "cells": [
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p10",
+      "cells": [
+        [
+          1,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    }
+  ],
+  "goals": [
+    {
+      "pieceId": "p1",
+      "cells": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    },
+    {
+      "pieceId": "p2",
+      "cells": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          2
+        ]
+      ]
+    }
+  ]
+},
 ];
