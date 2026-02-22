@@ -114,10 +114,20 @@ canvas.dragging { cursor: grabbing; }
   align-items: center;
   gap: 12px;
   transition: border-color 0.2s, transform 0.15s;
+  position: relative;
 }
 .level-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+
+.level-badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 18px;
+  line-height: 1;
+  min-width: 1em;
 }
 
 .level-thumb {

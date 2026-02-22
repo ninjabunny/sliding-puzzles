@@ -23,6 +23,32 @@ let inputHandler = null;
 let currentLevelIndex = -1;
 let currentLevelMinMoves = null;
 let allLevels = [...BUILTIN_LEVELS];
+const badgeElements = new Map(); // levelIndex → badge span
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem('slidingPuzzlesProgress') || '{}'); }
+  catch { return {}; }
+}
+
+function saveProgress(levelName, atPar) {
+  if (!levelName) return;
+  const progress = loadProgress();
+  const prev = progress[levelName] || {};
+  progress[levelName] = { solved: true, solvedAtPar: prev.solvedAtPar || atPar };
+  localStorage.setItem('slidingPuzzlesProgress', JSON.stringify(progress));
+}
+
+function badgeText(prog) {
+  if (!prog) return '';
+  return prog.solvedAtPar ? '🏆' : '⭐';
+}
+
+function updateBadge(levelIndex) {
+  const badge = badgeElements.get(levelIndex);
+  if (!badge) return;
+  const level = allLevels[levelIndex];
+  badge.textContent = badgeText(loadProgress()[level?.name]);
+}
 
 function launchConfetti() {
   const ctx = confettiCanvas.getContext('2d');
@@ -85,6 +111,11 @@ function showWin(atPar) {
   winMoves.textContent = gameState.moveCount;
   winOverlay.hidden = false;
   if (atPar) launchConfetti();
+  const level = allLevels[currentLevelIndex];
+  if (level?.name) {
+    saveProgress(level.name, atPar);
+    updateBadge(currentLevelIndex);
+  }
 }
 
 function loadAndPlay(levelJson, levelIndex) {
@@ -111,11 +142,18 @@ function loadAndPlay(levelJson, levelIndex) {
 
 function buildLevelCards() {
   levelSelect.innerHTML = '';
+  badgeElements.clear();
+  const progress = loadProgress();
 
   for (let i = 0; i < allLevels.length; i++) {
     const level = allLevels[i];
     const card = document.createElement('div');
     card.className = 'level-card';
+
+    const badge = document.createElement('span');
+    badge.className = 'level-badge';
+    badge.textContent = badgeText(progress[level.name]);
+    badgeElements.set(i, badge);
 
     const thumb = document.createElement('canvas');
     thumb.className = 'level-thumb';
@@ -134,6 +172,7 @@ function buildLevelCards() {
     btn.textContent = 'Play';
     btn.addEventListener('click', () => loadAndPlay(level, i));
 
+    card.appendChild(badge);
     card.appendChild(thumb);
     card.appendChild(name);
     card.appendChild(par);
