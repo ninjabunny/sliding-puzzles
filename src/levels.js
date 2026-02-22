@@ -915,6 +915,147 @@ const BUILTIN_LEVELS = [
     }
   ]
 },
+{
+  "name": "Maggie's Farm 37",
+  "width": 5,
+  "height": 4,
+  "pieces": [
+    {
+      "id": "p1",
+      "cells": [
+        [
+          3,
+          0
+        ]
+      ],
+      "color": "#ff6b6b",
+      "isTarget": true
+    },
+    {
+      "id": "p44",
+      "cells": [
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p45",
+      "cells": [
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p46",
+      "cells": [
+        [
+          1,
+          1
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p47",
+      "cells": [
+        [
+          0,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p48",
+      "cells": [
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p49",
+      "cells": [
+        [
+          2,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p50",
+      "cells": [
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "color": "#ffffff"
+    },
+    {
+      "id": "p51",
+      "cells": [
+        [
+          4,
+          2
+        ]
+      ],
+      "color": "#ffffff"
+    }
+  ],
+  "goals": [
+    {
+      "pieceId": "p1",
+      "cells": [
+        [
+          4,
+          3
+        ]
+      ]
+    }
+  ]
+},
 
 
   {
