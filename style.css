@@ -51,6 +51,14 @@ button:active { transform: scale(0.97); }
   color: var(--text-dim);
   border: 1px solid var(--border);
 }
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ---- Canvas ---- */
 canvas {
