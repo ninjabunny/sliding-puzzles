@@ -91,6 +91,15 @@ canvas.dragging { cursor: grabbing; }
   padding: 32px 24px;
 }
 
+@media (min-width: 701px) {
+  #level-select-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 32px 48px;
+  }
+}
+
 #level-select-wrap h2 {
   margin-bottom: 20px;
   font-size: 18px;
@@ -488,6 +497,7 @@ input[type="color"] {
 
 /* Responsive */
 @media (max-width: 700px) {
+  #game-header a { display: none; }
   #editor-layout {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
