@@ -131,7 +131,7 @@ const BUILTIN_LEVELS = [
       ]
     }
   ]
-}
+},
   {
     name: "Simplicity 2",
     width: 4,
