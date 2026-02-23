@@ -156,6 +156,7 @@ function buildLevelCards() {
     const level = allLevels[i];
     const card = document.createElement('div');
     card.className = 'level-card';
+    card.addEventListener('click', () => loadAndPlay(level, i));
 
     const badge = document.createElement('span');
     badge.className = 'level-badge';
@@ -180,7 +181,6 @@ function buildLevelCards() {
     const btn = document.createElement('button');
     btn.className = 'btn-play';
     btn.textContent = 'Play';
-    btn.addEventListener('click', () => loadAndPlay(level, i));
 
     card.appendChild(badge);
     card.appendChild(thumbWrap);

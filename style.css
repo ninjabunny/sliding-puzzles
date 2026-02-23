@@ -135,6 +135,7 @@ canvas {
   gap: 12px;
   transition: border-color 0.2s, transform 0.15s;
   position: relative;
+  cursor: pointer;
 }
 .level-card:hover {
   border-color: var(--accent);
