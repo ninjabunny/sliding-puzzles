@@ -62,12 +62,15 @@ button:active { transform: scale(0.97); }
 
 /* ---- Canvas ---- */
 canvas {
-  touch-action: none;
-  cursor: grab;
   border-radius: 12px;
   display: block;
 }
-canvas.dragging { cursor: grabbing; }
+
+#game-canvas {
+  touch-action: none;
+  cursor: grab;
+}
+#game-canvas.dragging { cursor: grabbing; }
 
 /* ======================================
    GAME PAGE (index.html)
