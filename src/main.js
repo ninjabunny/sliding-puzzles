@@ -162,9 +162,12 @@ function buildLevelCards() {
     badge.textContent = badgeText(progress[level.name]);
     badgeElements.set(i, badge);
 
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'level-thumb-wrap';
     const thumb = document.createElement('canvas');
     thumb.className = 'level-thumb';
     renderer.renderThumbnail(thumb, level);
+    thumbWrap.appendChild(thumb);
 
     const name = document.createElement('div');
     name.className = 'level-name';
@@ -180,7 +183,7 @@ function buildLevelCards() {
     btn.addEventListener('click', () => loadAndPlay(level, i));
 
     card.appendChild(badge);
-    card.appendChild(thumb);
+    card.appendChild(thumbWrap);
     card.appendChild(name);
     card.appendChild(par);
     card.appendChild(btn);

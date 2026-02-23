@@ -215,9 +215,10 @@ class Renderer {
 
   renderThumbnail(canvas, levelJson) {
     const dpr = window.devicePixelRatio || 1;
-    const TCELL = 20;
+    const TARGET = 120;
     const W = levelJson.width;
     const H = levelJson.height;
+    const TCELL = Math.max(2, Math.floor(TARGET / Math.max(W, H)));
     canvas.width = W * TCELL * dpr;
     canvas.height = H * TCELL * dpr;
     canvas.style.width = W * TCELL + 'px';

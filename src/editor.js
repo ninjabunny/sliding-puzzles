@@ -382,8 +382,8 @@ document.querySelectorAll('.tool-btn').forEach(btn => {
 
 // Size controls
 btnApplySize.addEventListener('click', () => {
-  const w = Math.max(3, Math.min(12, parseInt(inputWidth.value) || 6));
-  const h = Math.max(3, Math.min(12, parseInt(inputHeight.value) || 6));
+  const w = Math.max(1, parseInt(inputWidth.value) || 6);
+  const h = Math.max(1, parseInt(inputHeight.value) || 6);
   inputWidth.value = w;
   inputHeight.value = h;
   editorWidth = w;
