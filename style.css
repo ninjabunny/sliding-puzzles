@@ -557,6 +557,72 @@ input[type="color"] {
 }
 #editor-header-link:hover { color: var(--text); }
 
+/* Canvas wrapper (centers canvas inside game-container) */
+#canvas-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile landscape: sidebar layout */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Hide header in game mode to reclaim vertical space */
+  body:has(#game-container:not([hidden])) #game-header {
+    display: none;
+  }
+
+  #game-container {
+    flex-direction: row;
+    align-items: stretch;
+    padding: 12px;
+    gap: 12px;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  #canvas-wrap {
+    flex: 1;
+  }
+
+  #hud {
+    flex-direction: column;
+    width: 110px;
+    min-width: 110px;
+    align-self: stretch;
+    padding: 12px 10px;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  #hud-title {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    font-size: 11px;
+    word-break: break-word;
+  }
+
+  #hud-moves-wrap {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  #hud-moves {
+    font-size: 22px;
+    min-width: unset;
+  }
+
+  #hud-par {
+    font-size: 11px;
+  }
+
+  #hud-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
 /* Responsive */
 @media (max-width: 700px) {
   #game-header a { display: none; }

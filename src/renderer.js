@@ -14,10 +14,18 @@ class Renderer {
 
   resize(width, height) {
     // Fit the board to the available viewport space
-    const PAD = 16;
-    const HUD_H = 140; // HUD bar + game-container padding + gap
-    const availW = window.innerWidth - PAD * 2;
-    const availH = window.innerHeight - HUD_H;
+    const isLandscapeMobile = window.innerHeight < window.innerWidth && window.innerHeight <= 500;
+    let availW, availH;
+    if (isLandscapeMobile) {
+      // Sidebar (110px) + container padding (12px × 3 sides: left, gap, right) = 146px
+      availW = window.innerWidth - 146;
+      availH = window.innerHeight - 24; // 12px top + 12px bottom padding
+    } else {
+      const PAD = 16;
+      const HUD_H = 140; // HUD bar + game-container padding + gap
+      availW = window.innerWidth - PAD * 2;
+      availH = window.innerHeight - HUD_H;
+    }
     this.cellSize = Math.min(MAX_CELL, Math.floor(Math.min(availW / width, availH / height)));
 
     const px = width * this.cellSize;
