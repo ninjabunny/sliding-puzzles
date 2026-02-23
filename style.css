@@ -157,6 +157,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 .level-thumb {
@@ -164,6 +165,7 @@ canvas {
   image-rendering: pixelated;
   max-width: 120px;
   max-height: 120px;
+  pointer-events: none;
 }
 
 .level-name {
