@@ -123,6 +123,12 @@ function showWin(atPar) {
     saveProgress(level.name, atPar);
     updateBadge(currentLevelIndex);
   }
+  gtag('event', 'level_solved', {
+    level_name: level?.name ?? `Level ${currentLevelIndex + 1}`,
+    moves: gameState.moveCount,
+    par: currentLevelMinMoves,
+    at_par: atPar,
+  });
 }
 
 function loadAndPlay(levelJson, levelIndex) {
