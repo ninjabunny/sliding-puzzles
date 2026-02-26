@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,85 +8,98 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y7JSHCY5DR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-Y7JSHCY5DR');
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header id="game-header">
-  <h1>Sliding Puzzles</h1>
-  <a href="editor.html">Level Editor →</a>
-</header>
+  <header id="game-header">
+    <h1>Sliding Puzzles</h1>
+    <a href="editor.html">Level Editor →</a>
+  </header>
 
-<!-- Level Select -->
-<div id="level-select-wrap">
-  <h2>Choose a Level</h2>
-  <div id="level-select"></div>
+  <!-- Level Select -->
+  <div id="level-select-wrap">
+    <h2>Choose a Level</h2>
+    <div id="level-select"></div>
 
-  <div id="import-section">
-    <span>or</span>
-    <button id="import-btn" class="btn-secondary">Import JSON Level</button>
-    <input type="file" id="import-input" accept=".json,application/json" style="display:none">
-  </div>
-</div>
-
-<!-- Achievements reset (level select only) -->
-<div id="achievements-footer">
-  <button id="btn-reset-achievements" class="btn-ghost">Reset Achievements</button>
-</div>
-
-<dialog id="achievements-dialog">
-  <p>Clear all achievements?</p>
-  <small>All ⭐ and 🏆 badges will be removed.</small>
-  <div class="dialog-buttons">
-    <button id="btn-achievements-confirm" class="btn-primary">Clear</button>
-    <button id="btn-achievements-cancel" class="btn-ghost">Cancel</button>
-  </div>
-</dialog>
-
-<!-- Game Container -->
-<div id="game-container" hidden>
-  <div id="hud">
-    <span id="hud-title"></span>
-    <div id="hud-moves-wrap">
-      <span id="hud-moves">0</span>
-      <span id="hud-par"></span>
-    </div>
-    <div id="hud-actions">
-      <button id="btn-reset" class="btn-icon btn-secondary" title="Reset">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-      </button>
-      <button id="btn-back" class="btn-icon btn-ghost" title="Exit to level select">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      </button>
+    <div id="import-section">
+      <span>or</span>
+      <button id="import-btn" class="btn-secondary">Import JSON Level</button>
+      <input type="file" id="import-input" accept=".json,application/json" style="display:none">
     </div>
   </div>
-  <div id="canvas-wrap">
-    <canvas id="game-canvas"></canvas>
-  </div>
-</div>
 
-<!-- Win Overlay -->
-<div id="win-overlay" hidden>
-  <div id="win-box">
-    <h2>Solved! 🎉</h2>
-    <p>You completed the puzzle in</p>
-    <strong><span id="win-moves">0</span> moves</strong>
-    <div id="win-buttons">
-      <button id="btn-win-next" class="btn-primary">Next Level →</button>
-      <button id="btn-win-reset" class="btn-ghost">Play Again</button>
+  <!-- Achievements reset (level select only) -->
+  <div id="achievements-footer">
+    <button id="btn-reset-achievements" class="btn-ghost">Reset Achievements</button>
+    <a href="https://www.patreon.com/c/bunnydoctor" target="_blank" rel="noopener" id="patreon-link">Buy me a Month of
+      Claude!</a>
+  </div>
+
+  <dialog id="achievements-dialog">
+    <p>Clear all achievements?</p>
+    <small>All ⭐ and 🏆 badges will be removed.</small>
+    <div class="dialog-buttons">
+      <button id="btn-achievements-confirm" class="btn-primary">Clear</button>
+      <button id="btn-achievements-cancel" class="btn-ghost">Cancel</button>
+    </div>
+  </dialog>
+
+  <!-- Game Container -->
+  <div id="game-container" hidden>
+    <div id="hud">
+      <span id="hud-title"></span>
+      <div id="hud-moves-wrap">
+        <span id="hud-moves">0</span>
+        <span id="hud-par"></span>
+      </div>
+      <div id="hud-actions">
+        <button id="btn-reset" class="btn-icon btn-secondary" title="Reset">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+        </button>
+        <button id="btn-back" class="btn-icon btn-ghost" title="Exit to level select">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="canvas-wrap">
+      <canvas id="game-canvas"></canvas>
     </div>
   </div>
-</div>
 
-<canvas id="confetti-canvas"></canvas>
-<script defer src="src/levels.js"></script>
-<script defer src="src/game.js"></script>
-<script defer src="src/renderer.js"></script>
-<script defer src="src/input.js"></script>
-<script defer src="src/main.js"></script>
+  <!-- Win Overlay -->
+  <div id="win-overlay" hidden>
+    <div id="win-box">
+      <h2>Solved! 🎉</h2>
+      <p>You completed the puzzle in</p>
+      <strong><span id="win-moves">0</span> moves</strong>
+      <div id="win-buttons">
+        <button id="btn-win-next" class="btn-primary">Next Level →</button>
+        <button id="btn-win-reset" class="btn-ghost">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+  <script defer src="src/levels.js"></script>
+  <script defer src="src/game.js"></script>
+  <script defer src="src/renderer.js"></script>
+  <script defer src="src/input.js"></script>
+  <script defer src="src/main.js"></script>
 </body>
+
 </html>

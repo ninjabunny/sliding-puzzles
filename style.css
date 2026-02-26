@@ -202,9 +202,19 @@ canvas {
 
 /* Achievements footer */
 #achievements-footer {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   padding: 0 24px 40px;
 }
+
+#patreon-link {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 13px;
+}
+#patreon-link:hover { color: var(--text); }
 
 /* Confirmation dialog */
 dialog {
