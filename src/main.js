@@ -38,6 +38,7 @@ const HAPTIC_PATTERNS = Object.freeze({
   tap: 8,
   move: 12,
   win: [24, 36, 24],
+  winConfetti: [18, 32, 24, 28, 36, 26, 54],
   reset: [10, 18, 10],
 });
 
@@ -168,7 +169,7 @@ function showLevelSelect() {
 function showWin(atPar) {
   winMoves.textContent = gameState.moveCount;
   winOverlay.hidden = false;
-  triggerHaptic('win');
+  triggerHaptic(atPar ? 'winConfetti' : 'win');
   if (atPar) launchConfetti();
   const level = allLevels[currentLevelIndex];
   if (level?.name) {
