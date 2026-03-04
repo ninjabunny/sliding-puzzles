@@ -19,6 +19,10 @@ const achievementsDialog = document.getElementById('achievements-dialog');
 const btnResetAchievements = document.getElementById('btn-reset-achievements');
 const btnAchievementsConfirm = document.getElementById('btn-achievements-confirm');
 const btnAchievementsCancel = document.getElementById('btn-achievements-cancel');
+const btnSettings = document.getElementById('btn-settings');
+const settingsDialog = document.getElementById('settings-dialog');
+const settingHaptics = document.getElementById('setting-haptics');
+const btnSettingsClose = document.getElementById('btn-settings-close');
 
 const confettiCanvas = document.getElementById('confetti-canvas');
 
@@ -29,10 +33,57 @@ let currentLevelIndex = -1;
 let currentLevelMinMoves = null;
 let allLevels = [...BUILTIN_LEVELS];
 const badgeElements = new Map(); // levelIndex → badge span
+const SETTINGS_KEY = 'slidingPuzzlesSettings';
+const HAPTIC_PATTERNS = Object.freeze({
+  tap: 8,
+  move: 12,
+  win: [24, 36, 24],
+  reset: [10, 18, 10],
+});
+
+let appSettings = loadSettings();
+
+function loadJSON(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Ignore storage write failures (private mode, quota, etc.)
+  }
+}
+
+function loadSettings() {
+  const stored = loadJSON(SETTINGS_KEY, {});
+  return {
+    hapticsEnabled: stored.hapticsEnabled !== false,
+  };
+}
+
+function saveSettings() {
+  saveJSON(SETTINGS_KEY, appSettings);
+}
+
+function syncSettingsUI() {
+  settingHaptics.checked = appSettings.hapticsEnabled;
+}
+
+function triggerHaptic(patternName) {
+  if (!appSettings.hapticsEnabled) return;
+  if (typeof navigator?.vibrate !== 'function') return;
+  const pattern = HAPTIC_PATTERNS[patternName];
+  if (pattern == null) return;
+  navigator.vibrate(pattern);
+}
 
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('slidingPuzzlesProgress') || '{}'); }
-  catch { return {}; }
+  return loadJSON('slidingPuzzlesProgress', {});
 }
 
 function saveProgress(levelName, atPar) {
@@ -40,7 +91,7 @@ function saveProgress(levelName, atPar) {
   const progress = loadProgress();
   const prev = progress[levelName] || {};
   progress[levelName] = { solved: true, solvedAtPar: prev.solvedAtPar || atPar };
-  localStorage.setItem('slidingPuzzlesProgress', JSON.stringify(progress));
+  saveJSON('slidingPuzzlesProgress', progress);
 }
 
 function badgeText(prog) {
@@ -117,6 +168,7 @@ function showLevelSelect() {
 function showWin(atPar) {
   winMoves.textContent = gameState.moveCount;
   winOverlay.hidden = false;
+  triggerHaptic('win');
   if (atPar) launchConfetti();
   const level = allLevels[currentLevelIndex];
   if (level?.name) {
@@ -145,6 +197,7 @@ function loadAndPlay(levelJson, levelIndex) {
   if (!inputHandler) {
     inputHandler = new InputHandler(canvas, gameState, renderer, () => {
       updateHUD();
+      triggerHaptic('move');
     }, () => {
       showWin(currentLevelMinMoves != null && gameState.moveCount <= currentLevelMinMoves);
     });
@@ -162,7 +215,10 @@ function buildLevelCards() {
     const level = allLevels[i];
     const card = document.createElement('div');
     card.className = 'level-card';
-    card.addEventListener('click', () => loadAndPlay(level, i));
+    card.addEventListener('click', () => {
+      triggerHaptic('tap');
+      loadAndPlay(level, i);
+    });
 
     const badge = document.createElement('span');
     badge.className = 'level-badge';
@@ -214,6 +270,7 @@ function checkHashLevel() {
 
 // Buttons
 btnReset.addEventListener('click', () => {
+  triggerHaptic('reset');
   gameState.reset();
   renderer.render(gameState, null);
   updateHUD();
@@ -221,10 +278,12 @@ btnReset.addEventListener('click', () => {
 });
 
 btnBack.addEventListener('click', () => {
+  triggerHaptic('tap');
   showLevelSelect();
 });
 
 btnWinNext.addEventListener('click', () => {
+  triggerHaptic('tap');
   const next = currentLevelIndex + 1;
   if (next < allLevels.length) {
     loadAndPlay(allLevels[next], next);
@@ -234,6 +293,7 @@ btnWinNext.addEventListener('click', () => {
 });
 
 btnWinReset.addEventListener('click', () => {
+  triggerHaptic('reset');
   gameState.reset();
   renderer.render(gameState, null);
   updateHUD();
@@ -241,16 +301,30 @@ btnWinReset.addEventListener('click', () => {
 });
 
 // Reset achievements
-btnResetAchievements.addEventListener('click', () => achievementsDialog.showModal());
-btnAchievementsCancel.addEventListener('click', () => achievementsDialog.close());
+btnResetAchievements.addEventListener('click', () => {
+  triggerHaptic('tap');
+  achievementsDialog.showModal();
+});
+btnAchievementsCancel.addEventListener('click', () => {
+  triggerHaptic('tap');
+  achievementsDialog.close();
+});
 btnAchievementsConfirm.addEventListener('click', () => {
-  localStorage.removeItem('slidingPuzzlesProgress');
+  triggerHaptic('reset');
+  try {
+    localStorage.removeItem('slidingPuzzlesProgress');
+  } catch {
+    // Ignore storage write failures.
+  }
   achievementsDialog.close();
   buildLevelCards();
 });
 
 // Import JSON
-importBtn.addEventListener('click', () => importInput.click());
+importBtn.addEventListener('click', () => {
+  triggerHaptic('tap');
+  importInput.click();
+});
 importInput.addEventListener('change', () => {
   const file = importInput.files[0];
   if (!file) return;
@@ -267,6 +341,23 @@ importInput.addEventListener('change', () => {
   };
   reader.readAsText(file);
   importInput.value = '';
+});
+
+// Settings
+syncSettingsUI();
+btnSettings.addEventListener('click', () => {
+  triggerHaptic('tap');
+  syncSettingsUI();
+  settingsDialog.showModal();
+});
+settingHaptics.addEventListener('change', () => {
+  appSettings.hapticsEnabled = settingHaptics.checked;
+  saveSettings();
+  if (appSettings.hapticsEnabled) triggerHaptic('tap');
+});
+btnSettingsClose.addEventListener('click', () => {
+  triggerHaptic('tap');
+  settingsDialog.close();
 });
 
 // Re-fit canvas when window is resized or screen rotates

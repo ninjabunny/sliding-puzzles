@@ -97,6 +97,17 @@ canvas {
 }
 #game-header a:hover { color: var(--text); }
 
+#header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#btn-settings {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
 /* Level select */
 #level-select-wrap {
   padding: 32px 24px;
@@ -252,6 +263,20 @@ dialog small {
   gap: 10px;
   justify-content: center;
   margin-top: 8px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.setting-row input {
+  width: 16px;
+  height: 16px;
 }
 
 /* Game container */

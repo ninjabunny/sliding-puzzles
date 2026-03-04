@@ -19,7 +19,10 @@
 
   <header id="game-header">
     <h1>Sliding Puzzles</h1>
-    <a href="editor.html">Level Editor →</a>
+    <div id="header-actions">
+      <button id="btn-settings" class="btn-ghost" type="button">Settings</button>
+      <a href="editor.html">Level Editor →</a>
+    </div>
   </header>
 
   <!-- Level Select -->
@@ -47,6 +50,18 @@
     <div class="dialog-buttons">
       <button id="btn-achievements-confirm" class="btn-primary">Clear</button>
       <button id="btn-achievements-cancel" class="btn-ghost">Cancel</button>
+    </div>
+  </dialog>
+
+  <dialog id="settings-dialog">
+    <p>Settings</p>
+    <label class="setting-row">
+      <input type="checkbox" id="setting-haptics" checked>
+      <span>Haptic Feedback</span>
+    </label>
+    <small>Uses device vibration on supported browsers and devices.</small>
+    <div class="dialog-buttons">
+      <button id="btn-settings-close" class="btn-primary">Done</button>
     </div>
   </dialog>
 
