@@ -117,7 +117,7 @@ class InputHandler {
 
       if (steps > 0) {
         this.gameState.movePiece(this.dragState.pieceId, this.dragState.dir, steps);
-        if (this.onMove) this.onMove();
+        if (this.onMove) this.onMove(steps);
         if (this.gameState.checkWin() && this.onWin) this.onWin();
       }
     }

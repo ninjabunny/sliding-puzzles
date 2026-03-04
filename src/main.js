@@ -22,6 +22,7 @@ const btnAchievementsCancel = document.getElementById('btn-achievements-cancel')
 const btnSettings = document.getElementById('btn-settings');
 const settingsDialog = document.getElementById('settings-dialog');
 const settingHaptics = document.getElementById('setting-haptics');
+const settingSfx = document.getElementById('setting-sfx');
 const btnSettingsClose = document.getElementById('btn-settings-close');
 
 const confettiCanvas = document.getElementById('confetti-canvas');
@@ -43,6 +44,7 @@ const HAPTIC_PATTERNS = Object.freeze({
 });
 
 let appSettings = loadSettings();
+let audioContext = null;
 
 function loadJSON(key, fallback) {
   try {
@@ -64,6 +66,7 @@ function loadSettings() {
   const stored = loadJSON(SETTINGS_KEY, {});
   return {
     hapticsEnabled: stored.hapticsEnabled !== false,
+    sfxEnabled: stored.sfxEnabled !== false,
   };
 }
 
@@ -73,6 +76,7 @@ function saveSettings() {
 
 function syncSettingsUI() {
   settingHaptics.checked = appSettings.hapticsEnabled;
+  settingSfx.checked = appSettings.sfxEnabled;
 }
 
 function triggerHaptic(patternName) {
@@ -81,6 +85,137 @@ function triggerHaptic(patternName) {
   const pattern = HAPTIC_PATTERNS[patternName];
   if (pattern == null) return;
   navigator.vibrate(pattern);
+}
+
+function getAudioContext() {
+  if (!appSettings.sfxEnabled) return null;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return null;
+  if (!audioContext || audioContext.state === 'closed') {
+    audioContext = new Ctx();
+  }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume().catch(() => {});
+  }
+  return audioContext;
+}
+
+function playMoveSfx(steps = 1) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const clampedSteps = Math.max(1, Math.min(6, steps));
+  const now = ctx.currentTime;
+  const duration = 0.08 + clampedSteps * 0.015;
+  const attack = 0.007;
+  const peak = 0.07 + clampedSteps * 0.005;
+  const startFreq = 210 + clampedSteps * 10;
+  const endFreq = 140 + clampedSteps * 8;
+
+  const osc = ctx.createOscillator();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(startFreq, now);
+  osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(1200, now);
+  filter.frequency.exponentialRampToValueAtTime(650, now + duration);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(peak, now + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.addEventListener('ended', () => {
+    osc.disconnect();
+    filter.disconnect();
+    gain.disconnect();
+  });
+
+  osc.start(now);
+  osc.stop(now + duration + 0.01);
+}
+
+function playWinCheerSfx() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  const now = ctx.currentTime;
+
+  for (let i = 0; i < notes.length; i++) {
+    const start = now + i * 0.085;
+    const duration = 0.16 + i * 0.01;
+    const freq = notes[i];
+
+    const osc = ctx.createOscillator();
+    osc.type = i < notes.length - 1 ? 'triangle' : 'sine';
+    osc.frequency.setValueAtTime(freq, start);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.06 + i * 0.01, start + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.addEventListener('ended', () => {
+      osc.disconnect();
+      gain.disconnect();
+    });
+
+    osc.start(start);
+    osc.stop(start + duration);
+  }
+}
+
+function playWinSfx() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const notes = [392.0, 493.88];
+  const now = ctx.currentTime;
+
+  for (let i = 0; i < notes.length; i++) {
+    const start = now + i * 0.1;
+    const duration = 0.14;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(notes[i], start);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.045, start + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.addEventListener('ended', () => {
+      osc.disconnect();
+      gain.disconnect();
+    });
+
+    osc.start(start);
+    osc.stop(start + duration);
+  }
+}
+
+function triggerSfx(name, options = {}) {
+  if (!appSettings.sfxEnabled) return;
+  if (name === 'move') {
+    playMoveSfx(options.steps);
+  } else if (name === 'win') {
+    playWinSfx();
+  } else if (name === 'winConfetti') {
+    playWinCheerSfx();
+  }
 }
 
 function loadProgress() {
@@ -170,7 +305,12 @@ function showWin(atPar) {
   winMoves.textContent = gameState.moveCount;
   winOverlay.hidden = false;
   triggerHaptic(atPar ? 'winConfetti' : 'win');
-  if (atPar) launchConfetti();
+  if (atPar) {
+    launchConfetti();
+    triggerSfx('winConfetti');
+  } else {
+    triggerSfx('win');
+  }
   const level = allLevels[currentLevelIndex];
   if (level?.name) {
     saveProgress(level.name, atPar);
@@ -196,9 +336,10 @@ function loadAndPlay(levelJson, levelIndex) {
   showGame();
 
   if (!inputHandler) {
-    inputHandler = new InputHandler(canvas, gameState, renderer, () => {
+    inputHandler = new InputHandler(canvas, gameState, renderer, (steps) => {
       updateHUD();
       triggerHaptic('move');
+      triggerSfx('move', { steps });
     }, () => {
       showWin(currentLevelMinMoves != null && gameState.moveCount <= currentLevelMinMoves);
     });
@@ -355,6 +496,11 @@ settingHaptics.addEventListener('change', () => {
   appSettings.hapticsEnabled = settingHaptics.checked;
   saveSettings();
   if (appSettings.hapticsEnabled) triggerHaptic('tap');
+});
+settingSfx.addEventListener('change', () => {
+  appSettings.sfxEnabled = settingSfx.checked;
+  saveSettings();
+  if (appSettings.sfxEnabled) triggerSfx('move', { steps: 1 });
 });
 btnSettingsClose.addEventListener('click', () => {
   triggerHaptic('tap');
