@@ -103,10 +103,6 @@ canvas {
   gap: 10px;
 }
 
-#btn-settings {
-  padding: 6px 12px;
-  font-size: 13px;
-}
 
 /* Level select */
 #level-select-wrap {
