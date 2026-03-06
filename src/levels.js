@@ -3098,6 +3098,7 @@ const BUILTIN_LEVELS = [
       }
     ]
   },
+
   {
     "name": "X-Mas",
     "minMoves": 125,
@@ -3270,6 +3271,197 @@ const BUILTIN_LEVELS = [
           ],
           [
             0,
+            2
+          ]
+        ]
+      }
+    ]
+  }, {
+    "name": "Swap Puzzle - Yamamoto Hiroshi",
+    "minMoves": 172,
+    "width": 5,
+    "height": 4,
+    "pieces": [
+      {
+        "id": "p1",
+        "cells": [
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "#ff6b6b",
+        "isTarget": true
+      },
+      {
+        "id": "p5",
+        "cells": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "color": "#ff6b6b",
+        "isTarget": true
+      },
+      {
+        "id": "p6",
+        "cells": [
+          [
+            4,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "color": "#45b7d1",
+        "isTarget": true
+      },
+      {
+        "id": "p7",
+        "cells": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            3,
+            3
+          ]
+        ],
+        "color": "#45b7d1",
+        "isTarget": true
+      },
+      {
+        "id": "p8",
+        "cells": [
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "#ffd43b"
+      },
+      {
+        "id": "p9",
+        "cells": [
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "color": "#ffd43b",
+        "isTarget": true
+      }
+    ],
+    "goals": [
+      {
+        "pieceId": "p1",
+        "cells": [
+          [
+            4,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            3,
+            2
+          ]
+        ]
+      },
+      {
+        "pieceId": "p5",
+        "cells": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            3,
+            3
+          ]
+        ]
+      },
+      {
+        "pieceId": "p6",
+        "cells": [
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ]
+      },
+      {
+        "pieceId": "p7",
+        "cells": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            0,
+            3
+          ]
+        ]
+      },
+      {
+        "pieceId": "p9",
+        "cells": [
+          [
+            2,
+            3
+          ],
+          [
+            2,
             2
           ]
         ]
